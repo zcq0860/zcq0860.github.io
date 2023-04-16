@@ -1,0 +1,214 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WHAT</title><meta name="description"><meta name="author" content="Woongcha"><meta name="copyright" content="Woongcha"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://http//woongcha.github.io/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta property="og:type" content="website"><meta property="og:title" content="WHAT"><meta property="og:url" content="http://http//woongcha.github.io/"><meta property="og:site_name" content="WHAT"><meta property="og:description"><meta property="og:image" content="http://http//woongcha.github.io/img/avatar.jpg"><meta property="article:published_time" content="2021-04-24T16:18:02.858Z"><meta property="article:modified_time" content="2021-04-24T16:18:02.858Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'true'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false    
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: false,
+  isHome: true,
+  isHighlightShrink: false,
+  isSidebar: false,
+  postUpdate: '2021-04-25 00:18:02'
+}</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><link rel="stylesheet" href="/css/background.css"><link rel="stylesheet" href="/css/footer.css"><link rel="stylesheet" href="/css/scrollbar.css"><link rel="stylesheet" href="APlayer.min.css"><div id="aplayer"></div><script src="https://cdn.jsdelivr.net/gh/radium-bit/res@master/live2d/autoload.js" async></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js" async></script><meta name="generator" content="Hexo 5.0.0"><link rel="alternate" href="/atom.xml" title="WHAT" type="application/atom+xml">
+</head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">27</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">12</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">5</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 联系我</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div></div></div></div><div id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(/img/top2.jpg)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">WHAT</a></span><span class="pull-right menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 联系我</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="site-info"><h1 id="site_title">WHAT</h1><div id="site_subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/woongcha" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:971434003@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div id="scroll_down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout_page" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/08/09/%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99/" title="关于本站">     <img class="post_bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="关于本站"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/08/09/%E5%85%B3%E4%BA%8E%E6%9C%AC%E7%AB%99/" title="关于本站">关于本站</a><div class="article-meta-wrap"><span class="article-meta"><i class="fas fa-thumbtack article-meta__icon sticky"></i><span class="sticky">置顶</span><span class="article-meta__separator">|</span></span><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-08-09T10:41:00.000Z" title="发表于 2020-08-09 18:41:00">2020-08-09</time></span></div><div class="content">关于本站​    做自己的博客的想法也有很长时间了，最早在csdn上写自己的想法，自己所学到的知识等，但我发现，我写博客的目的是给自己看的，而不是展示出来，网上编程方向的资料有很多，我写的既不是最好的，也不是最全面的，甚至还有不少知识上的错误，所以决定做自己的博客。
+​    可能这个想法最早还在一个月前，我最初的想法是用springboot+vue做，vue卡住了我，又想到了thymeleaf，发现css/js等前端知识的欠缺使想法很难进行下去，直接pass。
+​    Gridea的出现使我认识到，前人栽树，后人乘凉，直接用模板，将现有的内容套用即可。我看了网上的部分模板及成品，认为并不是我理想的博客，但他的好处是提供图形化界面，一键导入内容，一键更换主题等。同时我还在找其他类似的模板，直到Hexo框架的出现。
+
+
+  在某群划水时，某大佬展示了他所做的博客https://mofan212.gitee.io/，我发现这才是我想要的，通过短暂的交流，发现Hexo简直是面向cv编程，在编程经验不足的情况下的最好选择。
+Hexo​    通过B站程序羊的手把手教学，Hexo本地化已经完成 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2021/04/13/ArrayList%E4%B8%AD%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E4%B8%8E%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%97%AE%E9%A2%98/" title="ArrayList">     <img class="post_bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ArrayList"></a></div><div class="recent-post-info"><a class="article-title" href="/2021/04/13/ArrayList%E4%B8%AD%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E4%B8%8E%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%97%AE%E9%A2%98/" title="ArrayList">ArrayList</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-04-12T16:00:14.000Z" title="发表于 2021-04-13 00:00:14">2021-04-13</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Java/">Java</a></span></div><div class="content">ArrayList中的线程安全与多线程问题ArrayList源码12345public boolean add(E e) &#123;    ensureCapacityInternal(size + 1);  // Increments modCount!!    elementData[size++] = e;    return true;&#125;
+
+​    在ArrayList的源码中，是先给底层的数组长度加一，然后把要加入的值加到数组的相应位置中。线程不安全的原因就在于此。此方法没有加synchronized，保证的运行时的效率，但也导致了此方法的并发性下降。
+解决办法
+Vector
+Collections集合工具类
+CopyOnWriteArrayList
+
+Vector源码123456public synchronized boolean add(E e) &#123;    modCount++;    ensureCapacityHelper(elementCount + 1);    elementData[elementCount++] = e;    re ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2021/03/14/Redis%E4%BF%9D%E8%AF%81%E4%B8%80%E8%87%B4%E6%80%A7+%E8%AF%A6%E8%A7%A3%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" title="Redis 保证一致性引发的问题/详解布隆过滤器">     <img class="post_bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis 保证一致性引发的问题/详解布隆过滤器"></a></div><div class="recent-post-info"><a class="article-title" href="/2021/03/14/Redis%E4%BF%9D%E8%AF%81%E4%B8%80%E8%87%B4%E6%80%A7+%E8%AF%A6%E8%A7%A3%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" title="Redis 保证一致性引发的问题/详解布隆过滤器">Redis 保证一致性引发的问题/详解布隆过滤器</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2021-03-13T16:00:43.000Z" title="发表于 2021-03-14 00:00:43">2021-03-14</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Java/">Java</a></span></div><div class="content">Redis 保证一致性引发的问题/详解布隆过滤器
+背景:当某项目使用Redis做缓存时，如何保证Redis与数据库中数据的一致性。
+
+Q：如何保证Redis的一致性1.当用户只做查询操作时：​    先向缓存中请求此数据，若此数据存在，直接返回缓存中的内容；若此数据不存在于缓存中，向数据库中发出查询请求，将结果返回并将此次的查询结果保存到数据库中。因为查询操作为幂等性操作，不需要考虑多次请求的情况。但此时需要考虑缓存穿透问题，即查询数据库中也不存在的数据。此时又有两种解决办法：
+缓存空对象（如果数据库中也查询不到，直接返回key(id)-value(null)）或者使用布隆过滤器 。
+2.当大量用户查询同一条数据时（热点事件的解决）：​    首先考虑缓存击穿问题，当布隆过滤器放过这些请求后，这些请求直接请求数据库，造成数据库宕机。
+​    解决办法：加分布式锁，使这些查询请求只有一个请求能够访问数据库，其他请求处于阻塞状态。当第一个请求查询到结果后，同时会将结果放入缓存中。当其他请求开始时，就会发现缓存中有数据，无需访问数据库，解决了缓存击穿的问题。
+3.更新数据库及redis缓存 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/09/02/%E5%90%88%E5%B9%B6%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/" title="合并有序链表">     <img class="post_bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="合并有序链表"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/02/%E5%90%88%E5%B9%B6%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/" title="合并有序链表">合并有序链表</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-09-01T16:00:00.000Z" title="发表于 2020-09-02 00:00:00">2020-09-02</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Java/">Java</a></span></div><div class="content">合并有序链表
+1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556package com.woongcha;public class Node &#123;    public int data;        public Node next;    public Node(int data) &#123;        this.data = data;    &#125;&#125;class myList&#123;    //当某个链表为空时，直接返回另一个链表。    //当两个链表都为空时，返回空。    public static Node mergeTwoList(Node node1,Node node2)&#123;        if (node1 == null &amp;&amp; node2 == null)&#123;            return null;        &#125;      ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/09/01/%E8%BD%AF%E9%80%9A%E5%8A%A8%E5%8A%9B%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" title="软通动力面试总结">     <img class="post_bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="软通动力面试总结"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/09/01/%E8%BD%AF%E9%80%9A%E5%8A%A8%E5%8A%9B%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" title="软通动力面试总结">软通动力面试总结</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-08-31T16:00:00.000Z" title="发表于 2020-09-01 00:00:00">2020-09-01</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span></div><div class="content">软通动力面试总结Spring常用注解Bean Component Configuration Autowired Resource
+内连接和左连接不同左连接：左边有的，右边没有的为null
+右连接：左边没有的，右边有的为null
+内连接：显示左边右边共有的
+你使用过的最复杂的SQL查询没有学全所有课的同学的学号、姓名；
+select Student.S#,Student.Snamefrom Student,SCwhere Student.S#=SC.S# group by Student.S#,Student.Sname having count(C#) &lt;(select count(C#) from Course);
+HashMap为什么用红黑树红黑树也是一种二叉查找树。当于是平衡二叉树，它是一种经典高效的算法，二叉树的特点是，左节点小于等于根节点，右节点大于等于根节点。随着数据越来越多，左节点就会越来越长，二叉树的查找就会越来越低,等同于遍历，二分查找就失去了意义。在检索的时候效率其实差不多，都是通过平衡来二分查找。但对于插入删除等操作效率提高很多。C
+ConcurrentH ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/08/24/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="单例模式">     <img class="post_bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="单例模式"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/08/24/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="单例模式">单例模式</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-08-23T16:00:00.000Z" title="发表于 2020-08-24 00:00:00">2020-08-24</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a></span></div><div class="content">设计模式单例模式
+饿汉式：不管有没有被调用，在程序启动时就创建好对象，可能会造成内存的浪费。
+
+12345678910public class Single &#123;    private Single()&#123;        System.out.println(&quot;懒汉式&quot;);    &#125;    private final static Single SINGLE = new Single();    public static Single getInstance()&#123;        return SINGLE;    &#125;&#125;
+
+
+
+
+懒汉式：在被调用时，再创建一个实例。
+
+123456789101112131415161718public class Single &#123;    private Single()&#123;        System.out.println(Thread.currentThread().getName());    &#125;    private volatile sta ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/08/17/%E5%89%8D%E7%AB%AF%E5%9F%BA%E7%A1%80css%EF%BC%8Cjs%EF%BC%8CjQurey/" title="前端基础css，js，jQurey">     <img class="post_bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="前端基础css，js，jQurey"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/08/17/%E5%89%8D%E7%AB%AF%E5%9F%BA%E7%A1%80css%EF%BC%8Cjs%EF%BC%8CjQurey/" title="前端基础css，js，jQurey">前端基础css，js，jQurey</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-08-16T16:00:00.000Z" title="发表于 2020-08-17 00:00:00">2020-08-17</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/JavaScript/">JavaScript</a></span></div><div class="content">css，js，jQurey学习目标：修改套用模板。
+本文所参考内容： https://jquery.cuishifeng.cn/
+​                                https://www.liaoxuefeng.com/wiki/1022910821149312
+CSS
+Cascading Style Sheet 级联样式表。
+
+位置：
+行内样式
+12&lt;h1 style=&quot;color:red;&quot;&gt;行内样式&lt;/h1&gt; &lt;p style=&quot;font-size:14px; color:green;&quot;&gt;直接在HTML标签中设置的样式&lt;/p&gt;
+
+内部样式表
+1234&lt;h1&gt;行内样式&lt;/h1&gt; &lt;style&gt;     h1&#123;color: green; &#125;&lt;/style&gt;
+
+外部样式表
+CSS代码保存在扩展名为.css的样式表中，使用链接的形式引入。
+1&lt;link rel=&quot;stylesheet&q ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/08/15/CAS/" title="CAS">     <img class="post_bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CAS"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/08/15/CAS/" title="CAS">CAS</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-08-14T16:00:00.000Z" title="发表于 2020-08-15 00:00:00">2020-08-15</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Java/">Java</a></span></div><div class="content">CASCAS全称为Compare-And-Swap，它是一条CPU并发原语。
+它的功能是判断内存某个位置的值是否为预期值，如果是则更改为新的值，这个过程是原子的。
+
+1234567public class CAS &#123;    public static void main(String[] args) &#123;        AtomicInteger atomicInteger = new AtomicInteger();        atomicInteger.getAndIncrement();        System.out.println(atomicInteger);    &#125;&#125;
+
+在使用getAndIncrement时，会对数据进行加一操作。
+123public final int getAndIncrement() &#123;    return unsafe.getAndAddInt(this, valueOffset, 1);&#125;
+
+getAndIncrement实际是由unsafe类中的getAndAddInt方法实 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/2020/08/15/volatile%E6%80%BB%E7%BB%93/" title="volatile">     <img class="post_bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="volatile"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/08/15/volatile%E6%80%BB%E7%BB%93/" title="volatile">volatile</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-08-14T16:00:00.000Z" title="发表于 2020-08-15 00:00:00">2020-08-15</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Java/">Java</a></span></div><div class="content">什么是volatile？是java虚拟机提供的轻量级的同步机制。
+volatile特性
+保证可见性
+当多个线程访问同一个变量时，其中一个线程修改了变量的值，其他的线程可以立即看到修改的值。即立刻刷新修改的值到主存而不是工作内存。
+
+不保证原子性
+在多个线程操作堆内存中的数据时，例如int a = 1；当线程一和线程二同时对a进行++操作时，根据JMM（Java memory model）原理，线程一二会将主内存中的数据分别复制到自己的工作内存中，在自己的工作内存中进行++操作，再将数据放回主内存中，此时线程一进行完++操作但线程二没有进行时，线程一会通知线程二a已经由1变为了2，所以线程二在进行++操作时，a会从2变为3再返回给主内存。但当大量线程进行a++操作时，某两个线程同时从主存中拿到了a=0的数据，且在第一个线程进行完a++操作后，a=1没有及时写回主存，而是线程二也进行a++操作，并将a=1写入到主存中，此时线程一也将a=1写回主存中，造成两次++操作只加了1.
+
+禁止指令重排
+大多数现代计算机为了提高性能而采取乱序执行，这使得内存屏障成为必须。在没有数据依赖性的情况下，多线 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/2020/08/11/Mysql%E9%AB%98%E7%BA%A7/" title="Mysql高级">     <img class="post_bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Mysql高级"></a></div><div class="recent-post-info"><a class="article-title" href="/2020/08/11/Mysql%E9%AB%98%E7%BA%A7/" title="Mysql高级">Mysql高级</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2020-08-10T16:00:00.000Z" title="发表于 2020-08-11 00:00:00">2020-08-11</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Mysql/">Mysql</a></span></div><div class="content">Mysql高级
+索引: 排好序的数据结构。
+
+为什么选用B树而不选用二叉树,红黑树,hash表?
+hash表:当使用范围查询时,例如id&gt;5,无法进入hash索引,只能不走索引查找。
+二叉树:当树进行单边增长时,例如1–2–3–4–5–6时 ,查找6的时候,还需要查找六次。
+红黑树:当数据量过大时,例如上百万数据,红黑树的高度n也会很大,2^n=数据量,此时如果查找的数据正好处于叶子节点,也会进行n次的磁盘io,出现和二叉树类似的问题。
+为什么使用B树?
+B树解决了红黑树高度的问题,使单次查找也很快,但范围查找依旧没有解决。
+索引使怎么支撑千万级表的快速查找?
+Mysql底层使用了B+树。一次磁盘io会调用一条节点。且B+树的叶子节点相互都有指针，也解决了范围查找的问题，例如查询id&gt;18，在通过B+树找到18以后，通过叶子节点的指针找到&gt;18的值。
+
+
+表存储引擎类型
+Innodb和MyISAM.
+MyISAM：只支持表锁
+MyISAM的key-value是通过索引值-磁盘文件指针进行查询。
+Innodb：支持行锁和表锁
+聚集索引
+Innodb的叶子节点包好了完整的 ...</div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" data-lazy-src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Woongcha</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives"><div class="headline">文章</div><div class="length_num">27</div></a></div><div class="card-info-data-item is-center">      <a href="/tags"><div class="headline">标签</div><div class="length_num">12</div></a></div><div class="card-info-data-item is-center"><a href="/categories"><div class="headline">分类</div><div class="length_num">5</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/woongcha"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/woongcha" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:971434003@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div></div><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-recent-item"><div class="aside-recent-post"><a class="aside-post-cover" href="/2021/04/13/ArrayList%E4%B8%AD%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E4%B8%8E%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%97%AE%E9%A2%98/" title="ArrayList"><img class="aside-post-bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ArrayList"/></a><div class="aside-post-info"><a class="aside-post-title" href="/2021/04/13/ArrayList%E4%B8%AD%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E4%B8%8E%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%97%AE%E9%A2%98/" title="ArrayList">ArrayList</a><time class="aside-post_meta post-meta-date" datetime="2021-04-12T16:00:14.000Z" title="发表于 2021-04-13 00:00:14">2021-04-13</time></div></div><div class="aside-recent-post"><a class="aside-post-cover" href="/2021/03/14/Redis%E4%BF%9D%E8%AF%81%E4%B8%80%E8%87%B4%E6%80%A7+%E8%AF%A6%E8%A7%A3%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" title="Redis 保证一致性引发的问题/详解布隆过滤器"><img class="aside-post-bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis 保证一致性引发的问题/详解布隆过滤器"/></a><div class="aside-post-info"><a class="aside-post-title" href="/2021/03/14/Redis%E4%BF%9D%E8%AF%81%E4%B8%80%E8%87%B4%E6%80%A7+%E8%AF%A6%E8%A7%A3%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/" title="Redis 保证一致性引发的问题/详解布隆过滤器">Redis 保证一致性引发的问题/详解布隆过滤器</a><time class="aside-post_meta post-meta-date" datetime="2021-03-13T16:00:43.000Z" title="发表于 2021-03-14 00:00:43">2021-03-14</time></div></div><div class="aside-recent-post"><a class="aside-post-cover" href="/2020/09/02/%E5%90%88%E5%B9%B6%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/" title="合并有序链表"><img class="aside-post-bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="合并有序链表"/></a><div class="aside-post-info"><a class="aside-post-title" href="/2020/09/02/%E5%90%88%E5%B9%B6%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/" title="合并有序链表">合并有序链表</a><time class="aside-post_meta post-meta-date" datetime="2020-09-01T16:00:00.000Z" title="发表于 2020-09-02 00:00:00">2020-09-02</time></div></div><div class="aside-recent-post"><a class="aside-post-cover" href="/2020/09/01/%E8%BD%AF%E9%80%9A%E5%8A%A8%E5%8A%9B%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" title="软通动力面试总结"><img class="aside-post-bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="软通动力面试总结"/></a><div class="aside-post-info"><a class="aside-post-title" href="/2020/09/01/%E8%BD%AF%E9%80%9A%E5%8A%A8%E5%8A%9B%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" title="软通动力面试总结">软通动力面试总结</a><time class="aside-post_meta post-meta-date" datetime="2020-08-31T16:00:00.000Z" title="发表于 2020-09-01 00:00:00">2020-09-01</time></div></div><div class="aside-recent-post"><a class="aside-post-cover" href="/2020/08/24/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="单例模式"><img class="aside-post-bg" data-lazy-src="/img/10.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="单例模式"/></a><div class="aside-post-info"><a class="aside-post-title" href="/2020/08/24/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="单例模式">单例模式</a><time class="aside-post_meta post-meta-date" datetime="2020-08-23T16:00:00.000Z" title="发表于 2020-08-24 00:00:00">2020-08-24</time></div></div></div></div></div><div class="card-widget card-categories"><div class="card-content"><div class="item-headline"><i class="fas fa-folder-open"></i><span>分类</span></div><ul class="card-category-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java/"><span class="card-category-list-name">Java</span><span class="card-category-list-count">21</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/JavaScript/"><span class="card-category-list-name">JavaScript</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Mysql/"><span class="card-category-list-name">Mysql</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"><span class="card-category-list-name">设计模式</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E9%9D%A2%E8%AF%95/"><span class="card-category-list-name">面试</span><span class="card-category-list-count">1</span></a></li>
+                       
+            </ul></div></div><div class="card-widget card-tags"><div class="card-content"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/Mybatis/" style="font-size: 16px; color: #999">Mybatis</a> <a href="/tags/Mysql/" style="font-size: 17.5px; color: #999da3">Mysql</a> <a href="/tags/SSM/" style="font-size: 16px; color: #999">SSM</a> <a href="/tags/SpringBoot/" style="font-size: 20.5px; color: #99a5b6">SpringBoot</a> <a href="/tags/SpringMVC/" style="font-size: 16px; color: #999">SpringMVC</a> <a href="/tags/nginx/" style="font-size: 16px; color: #999">nginx</a> <a href="/tags/redis/" style="font-size: 17.5px; color: #999da3">redis</a> <a href="/tags/spring/" style="font-size: 16px; color: #999">spring</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 16px; color: #999">前端</a> <a href="/tags/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" style="font-size: 16px; color: #999">单例模式</a> <a href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/" style="font-size: 22px; color: #99a9bf">多线程</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 19px; color: #99a1ac">面试</a></div></div></div><div class="card-widget card-archives"><div class="card-content"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/04/"><span class="card-archive-list-date">四月 2021</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2021/03/"><span class="card-archive-list-date">三月 2021</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/09/"><span class="card-archive-list-date">九月 2020</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/08/"><span class="card-archive-list-date">八月 2020</span><span class="card-archive-list-count">8</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/07/"><span class="card-archive-list-date">七月 2020</span><span class="card-archive-list-count">9</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/06/"><span class="card-archive-list-date">六月 2020</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/05/"><span class="card-archive-list-date">五月 2020</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/04/"><span class="card-archive-list-date">四月 2020</span><span class="card-archive-list-count">1</span></a></li></ul></div></div><div class="card-widget card-webinfo"><div class="card-content"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="webinfo-article-name">文章数目 :</div><div class="webinfo-article-count">27</div></div><div class="webinfo-item"><div class="webinfo-runtime-name">已运行时间 :</div><div class="webinfo-runtime-count" id="webinfo-runtime-count" publish_date="8/7/2020 00:00:00">     </div></div><div class="webinfo-item">      <div class="webinfo-site-uv-name">本站访客数 :</div><div class="webinfo-site-uv-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="webinfo-site-name">本站总访问量 :</div><div class="webinfo-site-pv-count" id="busuanzi_value_site_pv"></div></div></div></div></div></div></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Woongcha</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://woongcha.github.io/">blog</a>!</div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function subtitleType () {
+  if (true) { 
+    var typed = new Typed("#subtitle", {
+      strings: "每一个想要学习的念头，都有可能是未来的你在向你求救".split(","),
+      startDelay: 300,
+      typeSpeed: 150,
+      loop: true,
+      backSpeed: 50
+    })
+  } else {
+    document.getElementById("subtitle").innerHTML = '每一个想要学习的念头，都有可能是未来的你在向你求救'
+  }
+}
+
+if (true) {
+  if (typeof Typed === 'function') subtitleType()
+  else $.getScript('https://cdn.jsdelivr.net/npm/typed.js/lib/typed.min.js', subtitleType)
+} else {
+  subtitleType()
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script defer="defer" id="ribbon_piao" mobile="true" src="/js/third-party/piao.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script></div></body></html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Redis 保证一致性引发的问题/详解布隆过滤器 | WHAT</title><meta name="description" content="Redis 保证一致性引发的问题&#x2F;详解布隆过滤器 背景:当某项目使用Redis做缓存时，如何保证Redis与数据库中数据的一致性。  Q：如何保证Redis的一致性1.当用户只做查询操作时：​    先向缓存中请求此数据，若此数据存在，直接返回缓存中的内容；若此数据不存在于缓存中，向数据库中发出查询请求，将结果返回并将此次的查询结果保存到数据库中。因为查询操作为幂等性操作，不需要考虑多次请求的情况"><meta name="keywords" content="redis"><meta name="author" content="Woongcha"><meta name="copyright" content="Woongcha"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://http//woongcha.github.io/2021/03/14/Redis%E4%BF%9D%E8%AF%81%E4%B8%80%E8%87%B4%E6%80%A7+%E8%AF%A6%E8%A7%A3%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//fonts.googleapis.com" crossorigin="crossorigin"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta property="og:type" content="article"><meta property="og:title" content="Redis 保证一致性引发的问题/详解布隆过滤器"><meta property="og:url" content="http://http//woongcha.github.io/2021/03/14/Redis%E4%BF%9D%E8%AF%81%E4%B8%80%E8%87%B4%E6%80%A7+%E8%AF%A6%E8%A7%A3%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/"><meta property="og:site_name" content="WHAT"><meta property="og:description" content="Redis 保证一致性引发的问题&#x2F;详解布隆过滤器 背景:当某项目使用Redis做缓存时，如何保证Redis与数据库中数据的一致性。  Q：如何保证Redis的一致性1.当用户只做查询操作时：​    先向缓存中请求此数据，若此数据存在，直接返回缓存中的内容；若此数据不存在于缓存中，向数据库中发出查询请求，将结果返回并将此次的查询结果保存到数据库中。因为查询操作为幂等性操作，不需要考虑多次请求的情况"><meta property="og:image" content="http://http//woongcha.github.io/img/10.jpg"><meta property="article:published_time" content="2021-03-13T16:00:43.000Z"><meta property="article:modified_time" content="2021-03-13T18:14:39.746Z"><meta name="twitter:card" content="summary"><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#fff')
+  }
+}
+
+var getCookies = function (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+var autoChangeMode = 'true'
+var t = getCookies('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (Cookies.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web&amp;display=swap"><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  bookmark: {
+    message_prev: '按',
+    message_next: '键将本页加入书签'
+  },
+  runtime_unit: '天',
+  runtime: true,
+  copyright: undefined,
+  ClickShowText: undefined,
+  medium_zoom: false,
+  fancybox: true,
+  Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
+  baiduPush: false,
+  highlightCopy: true,
+  highlightLang: true,
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false    
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2021-03-14 02:14:39'
+}</script><noscript><style>
+#nav {
+  opacity: 1
+}
+.justified-gallery img {
+  opacity: 1
+}
+</style></noscript><link rel="stylesheet" href="/css/background.css"><link rel="stylesheet" href="/css/footer.css"><link rel="stylesheet" href="/css/scrollbar.css"><link rel="stylesheet" href="APlayer.min.css"><div id="aplayer"></div><script src="https://cdn.jsdelivr.net/gh/radium-bit/res@master/live2d/autoload.js" async></script><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js" async></script><meta name="generator" content="Hexo 5.0.0"><link rel="alternate" href="/atom.xml" title="WHAT" type="application/atom+xml">
+</head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" data-lazy-src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">27</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">12</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">分类</div><div class="length_num">5</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 联系我</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis-%E4%BF%9D%E8%AF%81%E4%B8%80%E8%87%B4%E6%80%A7%E5%BC%95%E5%8F%91%E7%9A%84%E9%97%AE%E9%A2%98-%E8%AF%A6%E8%A7%A3%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">Redis 保证一致性引发的问题&#x2F;详解布隆过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Q%EF%BC%9A%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81Redis%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-number">1.0.1.</span> <span class="toc-text">Q：如何保证Redis的一致性</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%BD%93%E7%94%A8%E6%88%B7%E5%8F%AA%E5%81%9A%E6%9F%A5%E8%AF%A2%E6%93%8D%E4%BD%9C%E6%97%B6%EF%BC%9A"><span class="toc-number">1.0.1.0.1.</span> <span class="toc-text">1.当用户只做查询操作时：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E5%BD%93%E5%A4%A7%E9%87%8F%E7%94%A8%E6%88%B7%E6%9F%A5%E8%AF%A2%E5%90%8C%E4%B8%80%E6%9D%A1%E6%95%B0%E6%8D%AE%E6%97%B6%EF%BC%88%E7%83%AD%E7%82%B9%E4%BA%8B%E4%BB%B6%E7%9A%84%E8%A7%A3%E5%86%B3%EF%BC%89%EF%BC%9A"><span class="toc-number">1.0.1.0.2.</span> <span class="toc-text">2.当大量用户查询同一条数据时（热点事件的解决）：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-%E6%9B%B4%E6%96%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%8Aredis%E7%BC%93%E5%AD%98%EF%BC%9A"><span class="toc-number">1.0.1.0.3.</span> <span class="toc-text">3.更新数据库及redis缓存：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Q%EF%BC%9A%E7%BC%93%E5%AD%98%E7%A9%BA%E5%AF%B9%E8%B1%A1%E4%BC%9A%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.0.2.</span> <span class="toc-text">Q：缓存空对象会存在的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Q%EF%BC%9A%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">1.0.3.</span> <span class="toc-text">Q：布隆过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="toc-number">1.0.3.0.1.</span> <span class="toc-text">1.布隆过滤器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.0.3.0.2.</span> <span class="toc-text">2.布隆过滤器存在的问题</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(/img/10.jpg)"><nav id="nav"><span class="pull-left" id="blog_name"><a class="blog_title" id="site-name" href="/">WHAT</a></span><span class="pull-right menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 联系我</span></a></div><div class="menus_item"><a class="site-page" href="/messageboard/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">Redis 保证一致性引发的问题/详解布隆过滤器</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-03-13T16:00:43.000Z" title="发表于 2021-03-14 00:00:43">2021-03-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-03-13T18:14:39.746Z" title="更新于 2021-03-14 02:14:39">2021-03-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h1 id="Redis-保证一致性引发的问题-详解布隆过滤器"><a href="#Redis-保证一致性引发的问题-详解布隆过滤器" class="headerlink" title="Redis 保证一致性引发的问题/详解布隆过滤器"></a>Redis 保证一致性引发的问题/详解布隆过滤器</h1><blockquote>
+<p>背景:当某项目使用Redis做缓存时，如何保证Redis与数据库中数据的一致性。</p>
+</blockquote>
+<h3 id="Q：如何保证Redis的一致性"><a href="#Q：如何保证Redis的一致性" class="headerlink" title="Q：如何保证Redis的一致性"></a>Q：如何保证Redis的一致性</h3><h5 id="1-当用户只做查询操作时："><a href="#1-当用户只做查询操作时：" class="headerlink" title="1.当用户只做查询操作时："></a>1.当用户只做查询操作时：</h5><p>​    先向缓存中请求此数据，若此数据存在，直接返回缓存中的内容；若此数据不存在于缓存中，向数据库中发出查询请求，将结果返回并将此次的查询结果保存到数据库中。因为查询操作为幂等性操作，不需要考虑多次请求的情况。但此时需要考虑缓存穿透问题，即查询数据库中也不存在的数据。此时又有两种解决办法：</p>
+<p><strong>缓存空对象（如果数据库中也查询不到，直接返回key(id)-value(null)）</strong>或者<strong>使用布隆过滤器</strong> 。</p>
+<h5 id="2-当大量用户查询同一条数据时（热点事件的解决）："><a href="#2-当大量用户查询同一条数据时（热点事件的解决）：" class="headerlink" title="2.当大量用户查询同一条数据时（热点事件的解决）："></a>2.当大量用户查询同一条数据时（热点事件的解决）：</h5><p>​    首先考虑缓存击穿问题，当布隆过滤器放过这些请求后，这些请求直接请求数据库，造成数据库宕机。</p>
+<p>​    解决办法：加分布式锁，使这些查询请求只有一个请求能够访问数据库，其他请求处于阻塞状态。当第一个请求查询到结果后，同时会将结果放入缓存中。当其他请求开始时，就会发现缓存中有数据，无需访问数据库，解决了缓存击穿的问题。</p>
+<h5 id="3-更新数据库及redis缓存："><a href="#3-更新数据库及redis缓存：" class="headerlink" title="3.更新数据库及redis缓存："></a>3.更新数据库及redis缓存：</h5><p>​    延迟双删：</p>
+<blockquote>
+<img src= "/img/loading.gif" data-lazy-src="https://blog-hexo-butterfly.oss-cn-beijing.aliyuncs.com/img/image-20210314003006554.png" alt="image-20210314003006554" style="zoom: 80%;" />
+</blockquote>
+<h3 id="Q：缓存空对象会存在的问题"><a href="#Q：缓存空对象会存在的问题" class="headerlink" title="Q：缓存空对象会存在的问题"></a>Q：缓存空对象会存在的问题</h3><p>​    1.当用户只查询固定内容的数据时，效果很好，缓存在未过期的情况下为数据库抵挡了所有请求。</p>
+<p>​    2.当用户做随机查询时，例如where id = Random Num （垃圾请求），此时会在Redis中加入大量的Null，占用Redis有限的内存。</p>
+<h3 id="Q：布隆过滤器"><a href="#Q：布隆过滤器" class="headerlink" title="Q：布隆过滤器"></a>Q：布隆过滤器</h3><h5 id="1-布隆过滤器"><a href="#1-布隆过滤器" class="headerlink" title="1.布隆过滤器"></a>1.布隆过滤器</h5><blockquote>
+<p>BloomFilter<Integer> myBloomFilter = BloomFilter.create(Funnels.integerFunnel(),1000000,0.01);</p>
+<img src= "/img/loading.gif" data-lazy-src="https://blog-hexo-butterfly.oss-cn-beijing.aliyuncs.com/img/image-20210313202956429.png" alt="image-20210313202956429"  />
+
+<img src= "/img/loading.gif" data-lazy-src="https://blog-hexo-butterfly.oss-cn-beijing.aliyuncs.com/img/image-20210313203302778.png" alt="image-20210313203302778"  />
+
+<img src= "/img/loading.gif" data-lazy-src="https://blog-hexo-butterfly.oss-cn-beijing.aliyuncs.com/img/image-20210313205547076.png" alt="image-20210313205547076"  />
+</blockquote>
+<p><strong>源码分析：</strong></p>
+<p>创建布隆过滤器需要分别传入布隆过滤器所要接受的类型、预计存入数据的数量、误判率。</p>
+<p>布隆过滤器的底层是一个bit数组，将<strong>预计存入数据的数量</strong>和<strong>误判率</strong>带入图2的计算公式可得到这个bit数组的大小（optimalNumOfBits）。</p>
+<p>通过图3计算出所需的hash函数的个数。理论上，<strong>预计存入数据的数量</strong>越多，<strong>误判率</strong>约趋近于0，bit数组的长度越大，需要生成的hash算法也就越多，每一条数据被hash的次数也就越多，最终的结果也就越精确。</p>
+<p><strong>举例说明：</strong></p>
+<blockquote>
+<p>演示地址 <a target="_blank" rel="noopener" href="https://www.jasondavies.com/bloomfilter/?spm=a2c4e.11153940.blogcont683602.11.21181fe6hVAGjH">https://www.jasondavies.com/bloomfilter/?spm=a2c4e.11153940.blogcont683602.11.21181fe6hVAGjH</a></p>
+</blockquote>
+<p>当我设置预计存入的数量为 10，误判率为0.1时，假设根据上述公式计算，初始化的bitArray长度为8，需要hash的次数为2（不是对key哈希两次，而是生成了两种hash算法）。当我要存入的key为 <code>woongcha</code>时， 第一次hash取模得到的结果为3，第二次hash取模的结果为5。此时这个bit数组的第三位和第五位就会由0变为1；再次存入<code>student</code> ，两次hash取模结果分别为3和4，此时这个bit数组的第三位和第四位就会由0变为1（原本为1，则不变）。此时我要判断 <code>beautiful</code>是不是在缓存中，通过布隆过滤器算出的两次hash取模结果分别为5和7，但bit数组中的第七位为0，所以teacher一定不在缓存中，此次请求会发往数据库。 </p>
+<p><strong>图解说明：</strong></p>
+<blockquote>
+<img src= "/img/loading.gif" data-lazy-src="https://blog-hexo-butterfly.oss-cn-beijing.aliyuncs.com/img/image-20210313222553765.png" alt="image-20210313222553765"  />
+
+<p>图中的黄格子代表此位上为1，白格子代表0。</p>
+<img src= "/img/loading.gif" data-lazy-src="https://blog-hexo-butterfly.oss-cn-beijing.aliyuncs.com/img/image-20210313222828811.png" alt="image-20210313222828811"  />
+</blockquote>
+<p>有hash计算的地方就会有hash冲突的地方，所以这也是布隆过滤器的误差所在。例如：</p>
+<blockquote>
+<img src= "/img/loading.gif" data-lazy-src="https://blog-hexo-butterfly.oss-cn-beijing.aliyuncs.com/img/image-20210313223142813.png" alt="image-20210313223142813"  />
+</blockquote>
+<p>当我在缓存中添加<code>woongcha1-woongcha10</code> 十个key时，代表这些数据在缓存中已经存在，无需请求数据库。此时发来了对<code>beautiful5</code> 的请求，<code>beautiful5</code>经过三次hash取模后所得到的值恰好在bitArray里都为1，布隆过滤器就会认为这个值也在缓存中，但实际上是不在的。这就是为什么会有mightContain()方法的存在，在名称上就直白的说明了是可能存在，而不是一定存在。这也说明了为什么布隆过滤器没有get和delete方法，因为存进去的值没有直接保存，而是保存了hash计算之后的结果。</p>
+<h5 id="2-布隆过滤器存在的问题"><a href="#2-布隆过滤器存在的问题" class="headerlink" title="2.布隆过滤器存在的问题"></a>2.布隆过滤器存在的问题</h5><p>​    <strong>脏数据问题</strong></p>
+<p>当某个查询使用布隆过滤器以后，当向数据库中插入/删除/更新数据时，布隆过滤器中的数据也必须跟着改变，否则就会出现某条存在于数据库中的数据直接被布隆过滤器拦截。造成查询错误。</p>
+<p>解决办法为定时更新布隆过滤器上的数据，数据越重要、数据库中的更新操作越多，布隆过滤器的更新间隔就应该越小。</p>
+<p>​    <strong>谷歌布隆过滤器问题</strong></p>
+<p>通过源码可知，谷歌所提供的布隆过滤器所新建的bitArray存在于JVM内存中，当服务器异常时，会因为内存的消失，布隆过滤器也会失效。而且在Java中bitArray的最大长度为2<sup>^32</sup>-1 = <strong>2147483647</strong>,bitArrays长度的限制必然导致精度的缺失。</p>
+<p>解决办法为用Redis手写实现布隆过滤器，redis有RDB和AOF的方式使数据持久化，使布隆过滤器长期有效且可以恢复，防止服务器出现的问题。利用redis的底层优势（redis储存数据也是由bitArrays存储的，且最大长度为512M≈42亿）新建bitArrays数组,此时的布隆过滤器就会更加准确。</p>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Woongcha</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://http//woongcha.github.io/2021/03/14/Redis%E4%BF%9D%E8%AF%81%E4%B8%80%E8%87%B4%E6%80%A7+%E8%AF%A6%E8%A7%A3%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/">http://http//woongcha.github.io/2021/03/14/Redis%E4%BF%9D%E8%AF%81%E4%B8%80%E8%87%B4%E6%80%A7+%E8%AF%A6%E8%A7%A3%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://http://woongcha.github.io" target="_blank">WHAT</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/redis/">redis</a></div><div class="post_share"><div class="social-share" data-image="/img/10.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/04/13/ArrayList%E4%B8%AD%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E4%B8%8E%E5%A4%9A%E7%BA%BF%E7%A8%8B%E9%97%AE%E9%A2%98/"><img class="prev-cover" data-lazy-src="/img/10.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">ArrayList</div></div></a></div><div class="next-post pull-right"><a href="/2020/09/02/%E5%90%88%E5%B9%B6%E6%9C%89%E5%BA%8F%E9%93%BE%E8%A1%A8/"><img class="next-cover" data-lazy-src="/img/10.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">合并有序链表</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2020/07/20/初学Redis/" title="Redis"><img class="relatedPosts_cover" data-lazy-src="/img/10.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-20</div><div class="relatedPosts_title">Redis</div></div></a></div></div></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By Woongcha</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">Hi, welcome to my <a target="_blank" rel="noopener" href="https://woongcha.github.io/">blog</a>!</div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font_plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font_minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module" defer></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js" async></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script defer="defer" id="ribbon_piao" mobile="true" src="/js/third-party/piao.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script></div></body></html>
